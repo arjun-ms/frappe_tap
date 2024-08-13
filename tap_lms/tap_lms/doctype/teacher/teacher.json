@@ -1,8 +1,9 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
  "autoname": "format:{first_name}-TC{###}",
- "creation": "2024-06-28 11:27:14.887561",
+ "creation": "2024-07-09 10:52:23.933245",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -10,26 +11,20 @@
  "field_order": [
   "first_name",
   "last_name",
-  "school",
+  "school_id",
+  "gender",
   "language",
-  "email",
+  "email_id",
   "department",
   "glific_id",
-  "phone_number"
+  "phone_number",
+  "course_level"
  ],
  "fields": [
   {
-   "fieldname": "school",
-   "fieldtype": "Link",
-   "label": "School",
-   "options": "School"
-  },
-  {
    "fieldname": "first_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "First name",
-   "reqd": 1
+   "label": "First name"
   },
   {
    "fieldname": "last_name",
@@ -37,9 +32,20 @@
    "label": "Last name"
   },
   {
+   "fieldname": "language",
+   "fieldtype": "Link",
+   "label": "Language",
+   "options": "TAP Language"
+  },
+  {
+   "fieldname": "email_id",
+   "fieldtype": "Data",
+   "label": "Email ID"
+  },
+  {
    "fieldname": "department",
    "fieldtype": "Data",
-   "label": "Department "
+   "label": "Department"
   },
   {
    "fieldname": "glific_id",
@@ -47,27 +53,32 @@
    "label": "Glific ID"
   },
   {
-   "fieldname": "email",
-   "fieldtype": "Data",
-   "label": "Email ID"
-  },
-  {
    "fieldname": "phone_number",
    "fieldtype": "Data",
-   "label": "Phone Number",
-   "unique": 1
+   "label": "Phone Number"
   },
   {
-   "default": "English",
-   "fieldname": "language",
+   "fieldname": "school_id",
+   "fieldtype": "Link",
+   "label": "School",
+   "options": "School"
+  },
+  {
+   "fieldname": "course_level",
+   "fieldtype": "Link",
+   "label": "Course Level ",
+   "options": "Course Level"
+  },
+  {
+   "fieldname": "gender",
    "fieldtype": "Select",
-   "label": "Language",
-   "options": "English\nAssamese\nBengali\nBodo\nDogri\nGujarati\nHindi\nKannada\nKashmiri\nKonkani\nMaithili\nMalayalam\nManipuri (Meitei)\nMarathi\nNepali\nOdia (Oriya)\nPunjabi\nSanskrit\nSantali\nSindhi\nTamil\nTelugu\nUrdu"
+   "label": "Gender",
+   "options": "Male\nFemale\nOthers\nNot Available"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-02 16:58:03.402907",
+ "modified": "2024-08-02 16:43:50.700187",
  "modified_by": "Administrator",
  "module": "Tap Lms",
  "name": "Teacher",

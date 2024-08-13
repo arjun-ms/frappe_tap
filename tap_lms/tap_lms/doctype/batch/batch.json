@@ -3,7 +3,7 @@
  "allow_events_in_timeline": 1,
  "allow_import": 1,
  "allow_rename": 1,
- "autoname": "format:BT{########}",
+ "autoname": "format:{name1}-BT{####}",
  "creation": "2023-02-13 14:15:57.404192",
  "default_view": "List",
  "doctype": "DocType",
@@ -13,7 +13,10 @@
   "name1",
   "start_date",
   "end_date",
-  "title"
+  "title",
+  "active",
+  "batch_id",
+  "regist_end_date"
  ],
  "fields": [
   {
@@ -34,18 +37,39 @@
   {
    "fieldname": "end_date",
    "fieldtype": "Date",
-   "label": "End Date"
+   "label": "End Date",
+   "reqd": 1
   },
   {
    "fieldname": "title",
    "fieldtype": "Data",
    "label": "Title",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "Active",
+   "reqd": 1
+  },
+  {
+   "fieldname": "batch_id",
+   "fieldtype": "Data",
+   "label": "Batch ID ",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "regist_end_date",
+   "fieldtype": "Date",
+   "label": "Registration End Date ",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-27 12:56:11.950558",
+ "modified": "2024-07-11 12:41:09.817061",
  "modified_by": "Administrator",
  "module": "Tap Lms",
  "name": "Batch",

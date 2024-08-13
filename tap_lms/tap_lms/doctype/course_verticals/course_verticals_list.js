@@ -1,4 +1,4 @@
-frappe.listview_settings["Course"] = {
+frappe.listview_settings["Course Verticals"] = {
   //   // add fields to fetch
   //   add_fields: ["title", "public"],
   //   // set default filters

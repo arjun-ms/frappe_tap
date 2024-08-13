@@ -30,12 +30,12 @@
    "fieldname": "course",
    "fieldtype": "Link",
    "label": "Course",
-   "options": "Course"
+   "options": "Course Verticals"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-04-26 13:18:35.195511",
+ "modified": "2024-07-09 13:10:20.758551",
  "modified_by": "Administrator",
  "module": "Tap Lms",
  "name": "Unit",

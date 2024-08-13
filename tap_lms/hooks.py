@@ -1,4 +1,6 @@
 from . import __version__ as app_version
+from frappe import get_all
+
 
 app_name = "tap_lms"
 app_title = "Tap Lms"
@@ -8,11 +10,23 @@ app_email = "tech4dev@gmail.com"
 app_license = "MIT"
 
 
+
+
+
+
 doc_events = {
     "School": {
         "before_save": "tap_lms.tap_lms.doctype.school.school.before_save"
+    },
+        "Teacher": {
+        "on_update": "tap_lms.glific_webhook.update_glific_contact"
     }
 }
+
+
+
+
+
 
 
 # Includes in <head>
@@ -200,4 +214,3 @@ doc_events = {
 # ]
 
 fixtures = [{ "doctype": "Client Script", "filters": [ ["module", "in", ( "Tap Lms" )] ] }]
-

@@ -1,40 +1,42 @@
 {
  "actions": [],
- "allow_import": 1,
  "allow_rename": 1,
- "autoname": "format:",
- "creation": "2023-02-13 15:17:20.673902",
+ "autoname": "format:{stage_name}-SG{###}",
+ "creation": "2024-07-09 13:39:19.693536",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "name1",
-  "name2"
+  "stage_name",
+  "from_grade",
+  "to_grade"
  ],
  "fields": [
   {
-   "fieldname": "name1",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Name",
-   "options": "Arts\nDance\nCoding\nScience\nFinancial Literacy",
-   "reqd": 1
+   "fieldname": "stage_name",
+   "fieldtype": "Data",
+   "label": "Stage Name"
   },
   {
-   "fieldname": "name2",
+   "fieldname": "from_grade",
    "fieldtype": "Select",
-   "label": "Label",
-   "options": "Visual Arts\nPerforming Arts\nSTEM - Coding\nSTEM - Science\nSTEM - Electronics\nFinancial Literacy",
-   "reqd": 1
+   "label": "From Grade",
+   "options": "4\n5\n6\n7\n8\n9\n10\n11\n12"
+  },
+  {
+   "fieldname": "to_grade",
+   "fieldtype": "Select",
+   "label": "To Grade",
+   "options": "4\n5\n6\n7\n8\n9\n10\n11\n12"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-21 15:27:41.876186",
+ "modified": "2024-07-09 13:40:03.377164",
  "modified_by": "Administrator",
  "module": "Tap Lms",
- "name": "Course",
+ "name": "Stage Grades",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
@@ -53,5 +55,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }

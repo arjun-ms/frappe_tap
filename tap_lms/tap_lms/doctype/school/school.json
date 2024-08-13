@@ -14,13 +14,13 @@
   "type",
   "board",
   "department",
-  "govtid",
   "status",
   "year",
   "address",
-  "city",
-  "state",
   "country",
+  "state",
+  "district",
+  "city",
   "pin",
   "keyword",
   "headmaster_name",
@@ -30,11 +30,7 @@
   "poc",
   "school_follow_up_frequency",
   "hm_follow_up_frequency",
-  "minimum_activity_access_target",
-  "minimum_submission_target",
-  "minimum_quiz_access_target",
-  "minimum_quiz_score_target",
-  "minimum_quiz_completion_target"
+  "tap_poc"
  ],
  "fields": [
   {
@@ -42,19 +38,21 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Name",
-   "reqd": 1
+   "reqd": 1,
+   "unique": 1
   },
   {
    "fieldname": "type",
    "fieldtype": "Select",
    "label": "Type",
-   "options": "APS\nGOVT\nNGO\nPPP\nPMC\nPVT, GOVT. aided\nORG"
+   "options": "APS\nGOVT\nNGO\nPPP\nPMC\nPVT, GOVT. aided\nORG",
+   "reqd": 1
   },
   {
    "fieldname": "city",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "City",
-   "options": "Hyderabad\nAhmedabad\nMumbai\nDelhi\nBangalore\nPune\nNuh\nIchalkaranji\nKargil\nKolkata\nBihar\nAssam\nAuroville\nAnupshahr\nRaipur"
+   "options": "City"
   },
   {
    "fieldname": "keyword",
@@ -65,7 +63,8 @@
   {
    "fieldname": "board",
    "fieldtype": "Data",
-   "label": "Board Affiliation"
+   "label": "Board Affiliation",
+   "reqd": 1
   },
   {
    "fieldname": "department",
@@ -73,15 +72,11 @@
    "label": "Regional Department"
   },
   {
-   "fieldname": "govtid",
-   "fieldtype": "Data",
-   "label": "UDISE",
-   "unique": 1
-  },
-  {
    "fieldname": "pin",
    "fieldtype": "Data",
-   "label": "PIN Code"
+   "label": "PIN Code",
+   "non_negative": 1,
+   "reqd": 1
   },
   {
    "fieldname": "address",
@@ -90,8 +85,10 @@
   },
   {
    "fieldname": "year",
-   "fieldtype": "Data",
-   "label": "Onboarding Year"
+   "fieldtype": "Select",
+   "label": "Onboarding Year",
+   "options": "2022\n2023\n2024",
+   "sort_options": 1
   },
   {
    "fieldname": "status",
@@ -101,25 +98,28 @@
   },
   {
    "fieldname": "state",
-   "fieldtype": "Data",
-   "label": "State"
+   "fieldtype": "Link",
+   "label": "State",
+   "options": "State"
   },
   {
    "default": "India",
    "fieldname": "country",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Country",
-   "options": "India"
+   "options": "Country"
   },
   {
    "fieldname": "headmaster_name",
    "fieldtype": "Data",
-   "label": "Headmaster Name"
+   "label": "Headmaster Name",
+   "reqd": 1
   },
   {
    "fieldname": "headmaster_phone",
    "fieldtype": "Data",
-   "label": "Headmaster Phone"
+   "label": "Headmaster Phone",
+   "reqd": 1
   },
   {
    "fieldname": "is_tfi",
@@ -134,61 +134,48 @@
    "options": "Yes\nNo"
   },
   {
-   "fieldname": "poc",
-   "fieldtype": "Table",
-   "label": "POC",
-   "options": "School_POC"
-  },
-  {
    "fieldname": "school_follow_up_frequency",
-   "fieldtype": "Data",
-   "label": "School Follow up frequency"
+   "fieldtype": "Select",
+   "label": "School Follow up frequency",
+   "options": "Weekly\nBi-monthly\nMonthly\nQuarterly",
+   "reqd": 1
   },
   {
-   "fieldname": "hm_follow_up_frequency",
-   "fieldtype": "Data",
-   "label": "HM Follow up frequency"
-  },
-  {
-   "fieldname": "minimum_activity_access_target",
-   "fieldtype": "Data",
-   "label": "Minimum Activity Access Target"
-  },
-  {
-   "fieldname": "minimum_submission_target",
-   "fieldtype": "Data",
-   "label": "Minimum Submission Target"
-  },
-  {
-   "fieldname": "minimum_quiz_access_target",
-   "fieldtype": "Data",
-   "label": "Minimum Quiz Access Target"
-  },
-  {
-   "fieldname": "minimum_quiz_score_target",
-   "fieldtype": "Data",
-   "label": "Minimum Quiz Score Target"
-  },
-  {
-   "fieldname": "minimum_quiz_completion_target",
-   "fieldtype": "Data",
-   "label": "Minimum Quiz Completion Target"
+   "fieldname": "district",
+   "fieldtype": "Link",
+   "label": "District",
+   "options": "District",
+   "reqd": 1
   },
   {
    "fieldname": "model",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Model",
-   "options": "Inschool\nAfterschool\nHybrid"
+   "options": "Tap Models"
+  },
+  {
+   "fieldname": "poc",
+   "fieldtype": "Table",
+   "label": "School POC",
+   "options": "School_POC"
+  },
+  {
+   "fieldname": "hm_follow_up_frequency",
+   "fieldtype": "Select",
+   "label": "HM Follow up frequency",
+   "options": "Weekly\nBi-monthly\nMonthly\nQuarterly",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tap_poc",
+   "fieldtype": "Link",
+   "label": "TAP  POC",
+   "options": "User"
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [
-  {
-   "link_doctype": "Teacher",
-   "link_fieldname": "school"
-  }
- ],
- "modified": "2024-07-02 17:32:45.766990",
+ "links": [],
+ "modified": "2024-07-22 10:20:15.834153",
  "modified_by": "Administrator",
  "module": "Tap Lms",
  "name": "School",

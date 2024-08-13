@@ -3,23 +3,14 @@
  "allow_rename": 1,
  "creation": "2024-07-02 11:56:17.354721",
  "doctype": "DocType",
- "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "school",
-  "teacher"
+  "teacherid"
  ],
  "fields": [
   {
-   "fieldname": "school",
+   "fieldname": "teacherid",
    "fieldtype": "Link",
-   "label": "school",
-   "options": "School"
-  },
-  {
-   "fieldname": "teacher",
-   "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Teacher",
    "options": "Teacher"
   }
@@ -27,7 +18,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-07-02 13:25:05.769367",
+ "modified": "2024-07-17 14:14:48.962268",
  "modified_by": "Administrator",
  "module": "Tap Lms",
  "name": "School_POC",
