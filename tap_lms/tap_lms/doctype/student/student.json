@@ -26,7 +26,8 @@
   "profile_id",
   "level",
   "rigour",
-  "language"
+  "language",
+  "glific_id"
  ],
  "fields": [
   {
@@ -123,14 +124,19 @@
   },
   {
    "fieldname": "language",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Language",
-   "options": "English\nHindi\nMarathi"
+   "options": "TAP Language"
+  },
+  {
+   "fieldname": "glific_id",
+   "fieldtype": "Data",
+   "label": "Glific ID"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-29 14:36:55.231928",
+ "modified": "2024-08-05 13:28:17.838777",
  "modified_by": "Administrator",
  "module": "Tap Lms",
  "name": "Student",

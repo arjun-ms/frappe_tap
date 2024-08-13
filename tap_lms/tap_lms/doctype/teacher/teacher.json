@@ -1,27 +1,88 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
- "creation": "2024-06-28 11:27:14.887561",
+ "autoname": "format:{first_name}-TC{###}",
+ "creation": "2024-07-09 10:52:23.933245",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "teachname"
+  "first_name",
+  "last_name",
+  "school_id",
+  "gender",
+  "language",
+  "email_id",
+  "department",
+  "glific_id",
+  "phone_number",
+  "course_level"
  ],
  "fields": [
   {
-   "fieldname": "teachname",
+   "fieldname": "first_name",
    "fieldtype": "Data",
-   "label": "name"
+   "label": "First name"
+  },
+  {
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "label": "Last name"
+  },
+  {
+   "fieldname": "language",
+   "fieldtype": "Link",
+   "label": "Language",
+   "options": "TAP Language"
+  },
+  {
+   "fieldname": "email_id",
+   "fieldtype": "Data",
+   "label": "Email ID"
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "label": "Department"
+  },
+  {
+   "fieldname": "glific_id",
+   "fieldtype": "Data",
+   "label": "Glific ID"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number"
+  },
+  {
+   "fieldname": "school_id",
+   "fieldtype": "Link",
+   "label": "School",
+   "options": "School"
+  },
+  {
+   "fieldname": "course_level",
+   "fieldtype": "Link",
+   "label": "Course Level ",
+   "options": "Course Level"
+  },
+  {
+   "fieldname": "gender",
+   "fieldtype": "Select",
+   "label": "Gender",
+   "options": "Male\nFemale\nOthers\nNot Available"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-28 11:27:14.887561",
+ "modified": "2024-08-02 16:43:50.700187",
  "modified_by": "Administrator",
  "module": "Tap Lms",
  "name": "Teacher",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
