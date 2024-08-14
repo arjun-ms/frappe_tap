@@ -742,8 +742,8 @@ def send_otp():
     }).insert(ignore_permissions=True)
 
     # Send WhatsApp message using the API
-    whatsapp_api_key = "f7UeSZMgMjrJ0h3QSCy2AynNRItF2Pq5"  # Replace with your actual API key
-    instance = "52367274"  # Replace with your actual instance ID
+    whatsapp_api_key = "J3tuS4rCqzcLiqt2SjyeiqYxjVLICnWb"  # Replace with your actual API key
+    instance = "27715370"  # Replace with your actual instance ID
     message = f"Your OTP is: {otp}"
     
     api_url = f"https://chatspaz.com/api/v1/send/wa/message?api_key={whatsapp_api_key}&instance={instance}&to={phone_number}&type=text&message={message}"
