@@ -271,44 +271,43 @@ def create_teacher(api_key, keyword, first_name, phone_number, glific_id, last_n
 
 
 
+
+
+
 @frappe.whitelist(allow_guest=True)
 def list_batch_keyword(api_key):
     if not authenticate_api_key(api_key):
         frappe.throw("Invalid API key")
 
-    current_date = today()
-    active_batches = frappe.get_all(
-        "Batch",
-        filters={
-            "active": 1,
-            "regist_end_date": [">=", current_date]
-        },
-        fields=["name", "batch_id", "title"]
-    )
-
+    current_date = getdate(today())
     whatsapp_number = "918454812392"
     response_data = []
 
-    for batch in active_batches:
-        batch_onboarding = frappe.get_all(
-            "Batch onboarding",
-            filters={"batch": batch.name},
-            fields=["school", "batch_skeyword"]
-        )
+    # Get all batch onboarding entries
+    batch_onboarding_list = frappe.get_all(
+        "Batch onboarding",
+        fields=["batch", "school", "batch_skeyword"]
+    )
 
-        if batch_onboarding:
-            school_name = frappe.get_value("School", batch_onboarding[0].school, "name1")
-            keyword_with_prefix = f"tapschool:{batch_onboarding[0].batch_skeyword}"
+    for onboarding in batch_onboarding_list:
+        batch = frappe.get_doc("Batch", onboarding.batch)
+        
+        # Check if the batch is active and registration end date is in the future
+        if batch.active and getdate(batch.regist_end_date) >= current_date:
+            school_name = frappe.get_value("School", onboarding.school, "name1")
+            keyword_with_prefix = f"tapschool:{onboarding.batch_skeyword}"
             batch_reg_link = f"https://api.whatsapp.com/send?phone={whatsapp_number}&text={keyword_with_prefix}"
 
             response_data.append({
                 "School_name": school_name,
-                "batch_keyword": batch_onboarding[0].batch_skeyword,
+                "batch_keyword": onboarding.batch_skeyword,
                 "batch_id": batch.batch_id,
                 "Batch_regLink": batch_reg_link
             })
 
     return response_data
+
+
 
 
 
