@@ -38,7 +38,8 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Name",
-   "reqd": 1
+   "reqd": 1,
+   "unique": 1
   },
   {
    "fieldname": "type",
@@ -174,7 +175,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-17 15:43:49.037330",
+ "modified": "2024-08-19 12:26:11.222299",
  "modified_by": "Administrator",
  "module": "Tap Lms",
  "name": "School",

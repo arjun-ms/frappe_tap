@@ -481,7 +481,7 @@ def verify_batch_keyword():
         )
 
         if not batch_onboarding:
-            frappe.response.http_status_code = 404
+            frappe.response.http_status_code = 202
             return {"status": "error", "message": "Invalid batch keyword"}
 
         batch_id = batch_onboarding[0].batch
@@ -489,14 +489,14 @@ def verify_batch_keyword():
         current_date = getdate()
 
         if not batch_doc.active:
-            frappe.response.http_status_code = 400
+            frappe.response.http_status_code = 202
             return {"status": "error", "message": "The batch is not active"}
 
         if batch_doc.regist_end_date:
             try:
                 regist_end_date = getdate(cstr(batch_doc.regist_end_date))
                 if regist_end_date < current_date:
-                    frappe.response.http_status_code = 400
+                    frappe.response.http_status_code = 202
                     return {"status": "error", "message": "Registration for this batch has ended"}
             except Exception as e:
                 frappe.log_error(f"Error parsing registration end date: {str(e)}")
@@ -524,7 +524,31 @@ def verify_batch_keyword():
         return {"status": "error", "message": str(e)}
 
 
+@frappe.whitelist(allow_guest=True)
+def grade_list(api_key, keyword):
+    if not authenticate_api_key(api_key):
+        frappe.throw("Invalid API key")
 
+    # Find the batch onboarding document based on the batch_skeyword
+    batch_onboarding = frappe.get_all(
+        "Batch onboarding",
+        filters={"batch_skeyword": keyword},
+        fields=["name", "from_grade", "to_grade"]
+    )
+
+    if not batch_onboarding:
+        frappe.throw("No batch found with the provided keyword")
+
+    # Extract the from_grade and to_grade from the batch onboarding document
+    from_grade = batch_onboarding[0].from_grade
+    to_grade = batch_onboarding[0].to_grade
+
+    # Generate a list of grades based on the from_grade and to_grade
+    grades = []
+    for grade in range(cint(from_grade), cint(to_grade) + 1):
+        grades.append(str(grade))
+
+    return grades
 
 
 
