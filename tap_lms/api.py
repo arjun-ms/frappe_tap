@@ -524,30 +524,6 @@ def verify_batch_keyword():
         return {"status": "error", "message": str(e)}
 
 
-    if not authenticate_api_key(api_key):
-        frappe.throw("Invalid API key")
-
-    # Find the batch onboarding document based on the batch_skeyword
-    batch_onboarding = frappe.get_all(
-        "Batch onboarding",
-        filters={"batch_skeyword": keyword},
-        fields=["name", "from_grade", "to_grade"]
-    )
-
-    if not batch_onboarding:
-        frappe.throw("No batch found with the provided keyword")
-
-    # Extract the from_grade and to_grade from the batch onboarding document
-    from_grade = batch_onboarding[0].from_grade
-    to_grade = batch_onboarding[0].to_grade
-
-    # Generate a list of grades based on the from_grade and to_grade
-    grades = []
-    for grade in range(cint(from_grade), cint(to_grade) + 1):
-        grades.append(str(grade))
-
-    return grades
-
 @frappe.whitelist(allow_guest=True)
 def grade_list(api_key, keyword):
     if not authenticate_api_key(api_key):
