@@ -734,7 +734,7 @@ def send_otp_gs():
 
 
 @frappe.whitelist(allow_guest=True)
-def send_otp():
+def send_otp_v0():
     data = frappe.request.get_json()
 
     if not data or 'api_key' not in data or not authenticate_api_key(data['api_key']):
@@ -802,8 +802,96 @@ def send_otp():
         }
 
 
+@frappe.whitelist(allow_guest=True)
+def send_otp():
+    try:
+        data = frappe.request.get_json()
 
+        if not data or 'api_key' not in data or not authenticate_api_key(data['api_key']):
+            frappe.response.http_status_code = 401
+            return {"status": "failure", "message": "Invalid API key"}
 
+        if 'phone' not in data:
+            frappe.response.http_status_code = 400
+            return {"status": "failure", "message": "Phone number is required"}
+
+        phone_number = data['phone']
+
+        # Check if the phone number is already registered
+        existing_teacher = frappe.get_all("Teacher", filters={"phone_number": phone_number}, fields=["name"])
+        if existing_teacher:
+            frappe.response.http_status_code = 409
+            return {
+                "status": "failure",
+                "message": "A teacher with this phone number already exists",
+                "existing_teacher_id": existing_teacher[0].name
+            }
+
+        otp = ''.join(random.choices(string.digits, k=4))
+
+        # Store OTP in the database
+        try:
+            otp_doc = frappe.get_doc({
+                "doctype": "OTP Verification",
+                "phone_number": phone_number,
+                "otp": otp,
+                "expiry": now_datetime() + timedelta(minutes=15)
+            })
+            otp_doc.insert(ignore_permissions=True)
+            frappe.db.commit()
+        except Exception as e:
+            frappe.log_error(f"Failed to store OTP: {str(e)}", "OTP Storage Error")
+            frappe.response.http_status_code = 500
+            return {
+                "status": "failure",
+                "message": "Failed to store OTP in the database",
+                "error": str(e)
+            }
+
+        # Send WhatsApp message using the API
+        whatsapp_api_key = "J3tuS4rCqzcLiqt2SjyeiqYxjVLICnWb"  # Replace with your actual API key
+        instance = "27715370"  # Replace with your actual instance ID
+        message = f"Your OTP is: {otp}"
+        
+        api_url = f"https://chatspaz.com/api/v1/send/wa/message?api_key={whatsapp_api_key}&instance={instance}&to={phone_number}&type=text&message={message}"
+
+        try:
+            response = requests.get(api_url)
+            response_data = response.json()
+
+            if response_data.get("status") == "success":
+                frappe.response.http_status_code = 200
+                return {
+                    "status": "success",
+                    "message": "OTP sent successfully via WhatsApp",
+                    "whatsapp_message_id": response_data.get("id")
+                }
+            else:
+                frappe.log_error(f"WhatsApp API Error: {response_data.get('message')}", "WhatsApp API Error")
+                frappe.response.http_status_code = 500
+                return {
+                    "status": "failure",
+                    "message": "Failed to send OTP via WhatsApp",
+                    "error": response_data.get("message")
+                }
+
+        except requests.RequestException as e:
+            frappe.log_error(f"WhatsApp API Request Error: {str(e)}", "WhatsApp API Request Error")
+            frappe.response.http_status_code = 500
+            return {
+                "status": "failure",
+                "message": "Error occurred while sending OTP via WhatsApp",
+                "error": str(e)
+            }
+
+    except Exception as e:
+        frappe.log_error(f"Unexpected error in send_otp: {str(e)}", "Send OTP Error")
+        frappe.response.http_status_code = 500
+        return {
+            "status": "failure",
+            "message": "An unexpected error occurred",
+            "error": str(e)
+        }
 
 
 @frappe.whitelist(allow_guest=True)
