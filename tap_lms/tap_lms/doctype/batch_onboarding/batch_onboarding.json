@@ -17,7 +17,8 @@
   "to_grade",
   "signed__mou",
   "annexure_link",
-  "batch_skeyword"
+  "batch_skeyword",
+  "kit_less"
  ],
  "fields": [
   {
@@ -71,11 +72,17 @@
    "fieldtype": "Data",
    "label": "Batch keyword",
    "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "kit_less",
+   "fieldtype": "Check",
+   "label": "Kit less"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-06 14:41:49.543027",
+ "modified": "2024-10-04 17:45:37.209295",
  "modified_by": "Administrator",
  "module": "Tap Lms",
  "name": "Batch onboarding",

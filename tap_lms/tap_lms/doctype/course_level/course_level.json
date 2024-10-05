@@ -10,14 +10,14 @@
  "field_order": [
   "name1",
   "vertical",
-  "stage"
+  "stage",
+  "kit_less"
  ],
  "fields": [
   {
    "fieldname": "name1",
    "fieldtype": "Data",
-   "label": "Name",
-   "options": "Level 1\nLevel 2\nLevel 3\nLevel 4"
+   "label": "Name"
   },
   {
    "fieldname": "vertical",
@@ -30,11 +30,17 @@
    "fieldtype": "Link",
    "label": "Stage",
    "options": "Stage Grades"
+  },
+  {
+   "default": "0",
+   "fieldname": "kit_less",
+   "fieldtype": "Check",
+   "label": "Kit Less"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-11 18:04:19.066565",
+ "modified": "2024-10-04 17:51:02.008243",
  "modified_by": "Administrator",
  "module": "Tap Lms",
  "name": "Course Level",

@@ -311,10 +311,6 @@ def list_batch_keyword(api_key):
 
 
 
-
-
-
-
 @frappe.whitelist(allow_guest=True)
 def create_student():
     try:
@@ -324,7 +320,7 @@ def create_student():
         phone = frappe.form_dict.get('phone')
         gender = frappe.form_dict.get('gender')
         grade = frappe.form_dict.get('grade')
-        language_name = frappe.form_dict.get('language')  # This is now the language name
+        language_name = frappe.form_dict.get('language')
         batch_skeyword = frappe.form_dict.get('batch_skeyword')
         vertical = frappe.form_dict.get('vertical')
         glific_id = frappe.form_dict.get('glific_id')
@@ -340,7 +336,7 @@ def create_student():
         batch_onboarding = frappe.get_all(
             "Batch onboarding",
             filters={"batch_skeyword": batch_skeyword},
-            fields=["school", "batch"]
+            fields=["name", "school", "batch", "kit_less"]
         )
 
         if not batch_onboarding:
@@ -348,6 +344,7 @@ def create_student():
 
         school_id = batch_onboarding[0].school
         batch = batch_onboarding[0].batch
+        kitless = batch_onboarding[0].kit_less
 
         # Check if the batch is active and registration end date is not passed
         batch_doc = frappe.get_doc("Batch", batch)
@@ -399,8 +396,8 @@ def create_student():
             # Create new student
             student = create_new_student(student_name, phone, gender, school_id, grade, language_name, glific_id)
 
-        # Create the enrollment
-        course_level = get_course_level(course_vertical[0].name, grade)
+        # Get the appropriate course level based on the kitless option
+        course_level = get_course_level(course_vertical[0].name, grade, kitless)
 
         # Adding the enrollment details to the student
         student.append("enrollment", {
@@ -424,6 +421,12 @@ def create_student():
     except Exception as e:
         frappe.log_error(f"Student Creation Error: {str(e)}")
         return {"status": "error", "message": str(e)}
+
+
+
+
+
+
 
 def create_new_student(student_name, phone, gender, school_id, grade, language_name, glific_id):
     student = frappe.get_doc({
@@ -477,7 +480,7 @@ def verify_batch_keyword():
         batch_onboarding = frappe.get_all(
             "Batch onboarding",
             filters={"batch_skeyword": batch_skeyword},
-            fields=["school", "batch", "model"]
+            fields=["school", "batch", "model","kit_less"]
         )
 
         if not batch_onboarding:
@@ -506,12 +509,14 @@ def verify_batch_keyword():
         school_name = cstr(frappe.get_value("School", batch_onboarding[0].school, "name1"))
         batch_id = cstr(frappe.get_value("Batch", batch_onboarding[0].batch, "batch_id"))
         tap_model = frappe.get_doc("Tap Models", batch_onboarding[0].model)
+        kit_less = batch_onboarding[0].kit_less
 
         response = {
             "school_name": school_name,
             "batch_id": batch_id,
             "tap_model_id": cstr(tap_model.name),
             "tap_model_name": cstr(tap_model.mname),
+            "kit_less": kit_less,
             "status": "success"
         }
 
@@ -1115,27 +1120,34 @@ def create_teacher_web():
 
 
 
-
-def get_course_level(course_vertical, grade):
-    stage = frappe.get_all(
-        "Stage Grades",
-        filters={
-            "from_grade": ["<=", grade],
-            "to_grade": [">=", grade]
-        },
-        fields=["name"]
-    )
+def get_course_level(course_vertical, grade, kitless):
+    query = """
+        SELECT name FROM `tabStage Grades`
+        WHERE CAST(%s AS INTEGER) BETWEEN CAST(from_grade AS INTEGER) AND CAST(to_grade AS INTEGER)
+    """
+    stage = frappe.db.sql(query, grade, as_dict=True)
 
     if not stage:
-        frappe.throw("No matching stage found for the given grade")
+        # Check if there is a specific stage for the given grade
+        query = """
+            SELECT name FROM `tabStage Grades`
+            WHERE CAST(from_grade AS INTEGER) = CAST(%s AS INTEGER) AND CAST(to_grade AS INTEGER) = CAST(%s AS INTEGER)
+        """
+        stage = frappe.db.sql(query, (grade, grade), as_dict=True)
+
+        if not stage:
+            frappe.throw("No matching stage found for the given grade")
 
     course_level = frappe.get_all(
         "Course Level",
         filters={
             "vertical": course_vertical,
-            "stage": stage[0].name
+            "stage": stage[0].name,
+            "kit_less": kitless
         },
-        fields=["name"]
+        fields=["name"],
+        order_by="modified desc",
+        limit=1
     )
 
     if not course_level:
@@ -1143,6 +1155,59 @@ def get_course_level(course_vertical, grade):
 
     return course_level[0].name
 
+
+@frappe.whitelist(allow_guest=True)
+def get_course_level_api():
+    try:
+        # Get the data from the request
+        api_key = frappe.form_dict.get('api_key')
+        grade = frappe.form_dict.get('grade')
+        vertical = frappe.form_dict.get('vertical')
+        batch_skeyword = frappe.form_dict.get('batch_skeyword')
+
+        if not authenticate_api_key(api_key):
+            frappe.throw("Invalid API key")
+
+        # Validate required fields
+        if not all([grade, vertical, batch_skeyword]):
+            return {"status": "error", "message": "All fields are required"}
+
+        # Get the school and batch from batch_skeyword
+        batch_onboarding = frappe.get_all(
+            "Batch onboarding",
+            filters={"batch_skeyword": batch_skeyword},
+            fields=["name", "kit_less"]
+        )
+
+        if not batch_onboarding:
+            return {"status": "error", "message": "Invalid batch_skeyword"}
+
+        kitless = batch_onboarding[0].kit_less
+
+        # Get the course vertical using the label
+        course_vertical = frappe.get_all(
+            "Course Verticals",
+            filters={"name2": vertical},
+            fields=["name"]
+        )
+
+        if not course_vertical:
+            return {"status": "error", "message": "Invalid vertical label"}
+
+        # Get the appropriate course level based on the kitless option
+        course_level = get_course_level(course_vertical[0].name, grade, kitless)
+
+        return {
+            "status": "success",
+            "course_level": course_level
+        }
+
+    except frappe.ValidationError as e:
+        frappe.log_error(f"Course Level API Validation Error: {str(e)}")
+        return {"status": "error", "message": str(e)}
+    except Exception as e:
+        frappe.log_error(f"Course Level API Error: {str(e)}")
+        return {"status": "error", "message": str(e)}
 
 
 

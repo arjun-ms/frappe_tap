@@ -63,8 +63,7 @@
   {
    "fieldname": "board",
    "fieldtype": "Data",
-   "label": "Board Affiliation",
-   "reqd": 1
+   "label": "Board Affiliation"
   },
   {
    "fieldname": "department",
@@ -75,8 +74,7 @@
    "fieldname": "pin",
    "fieldtype": "Data",
    "label": "PIN Code",
-   "non_negative": 1,
-   "reqd": 1
+   "non_negative": 1
   },
   {
    "fieldname": "address",
@@ -87,8 +85,7 @@
    "fieldname": "year",
    "fieldtype": "Select",
    "label": "Onboarding Year",
-   "options": "2022\n2023\n2024",
-   "sort_options": 1
+   "options": "2022\n2023\n2024"
   },
   {
    "fieldname": "status",
@@ -112,14 +109,12 @@
   {
    "fieldname": "headmaster_name",
    "fieldtype": "Data",
-   "label": "Headmaster Name",
-   "reqd": 1
+   "label": "Headmaster Name"
   },
   {
    "fieldname": "headmaster_phone",
    "fieldtype": "Data",
-   "label": "Headmaster Phone",
-   "reqd": 1
+   "label": "Headmaster Phone"
   },
   {
    "fieldname": "is_tfi",
@@ -137,8 +132,7 @@
    "fieldname": "school_follow_up_frequency",
    "fieldtype": "Select",
    "label": "School Follow up frequency",
-   "options": "Weekly\nBi-monthly\nMonthly\nQuarterly",
-   "reqd": 1
+   "options": "Weekly\nBi-monthly\nMonthly\nQuarterly"
   },
   {
    "fieldname": "district",
@@ -163,8 +157,7 @@
    "fieldname": "hm_follow_up_frequency",
    "fieldtype": "Select",
    "label": "HM Follow up frequency",
-   "options": "Weekly\nBi-monthly\nMonthly\nQuarterly",
-   "reqd": 1
+   "options": "Weekly\nBi-monthly\nMonthly\nQuarterly"
   },
   {
    "fieldname": "tap_poc",
@@ -175,7 +168,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-19 12:26:11.222299",
+ "modified": "2024-09-15 02:00:59.314701",
  "modified_by": "Administrator",
  "module": "Tap Lms",
  "name": "School",

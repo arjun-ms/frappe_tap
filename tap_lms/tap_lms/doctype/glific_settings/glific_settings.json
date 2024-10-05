@@ -27,11 +27,6 @@
    "label": "Phone Number"
   },
   {
-   "fieldname": "password",
-   "fieldtype": "Password",
-   "label": "Password"
-  },
-  {
    "fieldname": "access_token",
    "fieldtype": "Data",
    "label": "Access Token"
@@ -45,12 +40,17 @@
    "fieldname": "token_expiry_time",
    "fieldtype": "Datetime",
    "label": "Token Expiry Time"
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Data",
+   "label": "Password"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-07-24 11:12:30.188162",
+ "modified": "2024-09-15 13:34:04.453247",
  "modified_by": "Administrator",
  "module": "Tap Lms",
  "name": "Glific Settings",

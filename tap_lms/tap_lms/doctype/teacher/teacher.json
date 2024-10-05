@@ -73,12 +73,12 @@
    "fieldname": "gender",
    "fieldtype": "Select",
    "label": "Gender",
-   "options": "Male\nFemale\nOthers\nNot Available"
+   "options": "Select\nMale\nFemale\nOthers\nNot Available"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-02 16:43:50.700187",
+ "modified": "2024-09-15 15:06:46.189994",
  "modified_by": "Administrator",
  "module": "Tap Lms",
  "name": "Teacher",
