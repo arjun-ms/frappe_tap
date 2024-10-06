@@ -326,10 +326,12 @@ def create_student():
         glific_id = frappe.form_dict.get('glific_id')
 
         if not authenticate_api_key(api_key):
-            frappe.throw("Invalid API key")
+            frappe.response.status_code = 202
+            return {"status": "error", "message": "Invalid API key"}
 
         # Validate required fields
         if not all([student_name, phone, gender, grade, language_name, batch_skeyword, vertical, glific_id]):
+            frappe.response.status_code = 202
             return {"status": "error", "message": "All fields are required"}
 
         # Get the school and batch from batch_skeyword
@@ -340,6 +342,7 @@ def create_student():
         )
 
         if not batch_onboarding:
+            frappe.response.status_code = 202
             return {"status": "error", "message": "Invalid batch_skeyword"}
 
         school_id = batch_onboarding[0].school
@@ -351,15 +354,18 @@ def create_student():
         current_date = getdate()
 
         if not batch_doc.active:
+            frappe.response.status_code = 202
             return {"status": "error", "message": "The batch is not active"}
 
         if batch_doc.regist_end_date:
             try:
                 regist_end_date = getdate(cstr(batch_doc.regist_end_date))
                 if regist_end_date < current_date:
+                    frappe.response.status_code = 202
                     return {"status": "error", "message": "Registration for this batch has ended"}
             except Exception as e:
                 frappe.log_error(f"Error parsing registration end date: {str(e)}")
+                frappe.response.status_code = 202
                 return {"status": "error", "message": "Invalid registration end date format"}
 
         # Get the course vertical using the label
@@ -370,6 +376,7 @@ def create_student():
         )
 
         if not course_vertical:
+            frappe.response.status_code = 202
             return {"status": "error", "message": "Invalid vertical label"}
 
         # Check if student with glific_id already exists
@@ -417,9 +424,11 @@ def create_student():
 
     except frappe.ValidationError as e:
         frappe.log_error(f"Student Creation Validation Error: {str(e)}")
+        frappe.response.status_code = 202
         return {"status": "error", "message": str(e)}
     except Exception as e:
         frappe.log_error(f"Student Creation Error: {str(e)}")
+        frappe.response.status_code = 202
         return {"status": "error", "message": str(e)}
 
 
