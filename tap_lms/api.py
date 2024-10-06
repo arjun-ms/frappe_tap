@@ -1120,12 +1120,18 @@ def create_teacher_web():
 
 
 
+
 def get_course_level(course_vertical, grade, kitless):
+    frappe.log_error(f"Input values: course_vertical={course_vertical}, grade={grade}, kitless={kitless}")
+
     query = """
         SELECT name FROM `tabStage Grades`
         WHERE CAST(%s AS INTEGER) BETWEEN CAST(from_grade AS INTEGER) AND CAST(to_grade AS INTEGER)
     """
+    frappe.log_error(f"Stage query: {query[:100]}..." if len(query) > 100 else query)
     stage = frappe.db.sql(query, grade, as_dict=True)
+
+    frappe.log_error(f"Stage result: {stage}")
 
     if not stage:
         # Check if there is a specific stage for the given grade
@@ -1133,7 +1139,10 @@ def get_course_level(course_vertical, grade, kitless):
             SELECT name FROM `tabStage Grades`
             WHERE CAST(from_grade AS INTEGER) = CAST(%s AS INTEGER) AND CAST(to_grade AS INTEGER) = CAST(%s AS INTEGER)
         """
+        frappe.log_error(f"Specific stage query: {query[:100]}..." if len(query) > 100 else query)
         stage = frappe.db.sql(query, (grade, grade), as_dict=True)
+
+        frappe.log_error(f"Specific stage result: {stage}")
 
         if not stage:
             frappe.throw("No matching stage found for the given grade")
@@ -1150,10 +1159,34 @@ def get_course_level(course_vertical, grade, kitless):
         limit=1
     )
 
+    frappe.log_error(f"Course level query filters: vertical={course_vertical}, stage={stage[0].name}, kit_less={kitless}")
+    frappe.log_error(f"Course level query: {frappe.as_json(course_level)}")
+
+    if not course_level and kitless:
+        # If no course level found with kit_less enabled, search for a course level without considering kit_less
+        course_level = frappe.get_all(
+            "Course Level",
+            filters={
+                "vertical": course_vertical,
+                "stage": stage[0].name
+            },
+            fields=["name"],
+            order_by="modified desc",
+            limit=1
+        )
+
+        frappe.log_error(f"Fallback course level query filters: vertical={course_vertical}, stage={stage[0].name}")
+        frappe.log_error(f"Fallback course level query: {frappe.as_json(course_level)}")
+
     if not course_level:
         frappe.throw("No matching course level found")
 
     return course_level[0].name
+
+
+
+
+
 
 
 @frappe.whitelist(allow_guest=True)
