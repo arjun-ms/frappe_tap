@@ -2,7 +2,7 @@ import frappe
 from frappe.utils.background_jobs import enqueue
 from .glific_integration import optin_contact, start_contact_flow
 
-def process_glific_actions(teacher_id, phone, first_name, school, school_name, language, model_name):
+def process_glific_actions(teacher_id, phone, first_name, school, school_name, language, model_name, batch_name):
     try:
         # Optin the contact
         optin_success = optin_contact(phone, first_name)
@@ -24,7 +24,8 @@ def process_glific_actions(teacher_id, phone, first_name, school, school_name, l
                 "school_id": school,
                 "school_name": school_name,
                 "language": language,
-                "model": model_name
+                "model": model_name,
+                "batch_name": batch_name
             }
             flow_started = start_contact_flow(flow, glific_id, default_results)
             if flow_started:
@@ -37,7 +38,7 @@ def process_glific_actions(teacher_id, phone, first_name, school, school_name, l
     except Exception as e:
         frappe.logger().error(f"Error in process_glific_actions for teacher {teacher_id}: {str(e)}")
 
-def enqueue_glific_actions(teacher_id, phone, first_name, school, school_name, language, model_name):
+def enqueue_glific_actions(teacher_id, phone, first_name, school, school_name, language, model_name,batch_name):
     enqueue(
         process_glific_actions,
         queue="short",
@@ -48,5 +49,6 @@ def enqueue_glific_actions(teacher_id, phone, first_name, school, school_name, l
         school=school,
         school_name=school_name,
         language=language,
-        model_name=model_name
+        model_name=model_name,
+        batch_name=batch_name
     )

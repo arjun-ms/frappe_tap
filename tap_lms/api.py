@@ -1023,7 +1023,7 @@ def create_teacher_web():
             return {"status": "failure", "message": "Invalid API key"}
 
         # Validate required fields
-        required_fields = ['firstName', 'phone', 'School_name']
+        required_fields = ['firstName', 'phone', 'School_name', 'batch_name']
         for field in required_fields:
             if field not in data:
                 return {"status": "failure", "message": f"Missing required field: {field}"}
@@ -1058,7 +1058,8 @@ def create_teacher_web():
             "last_name": data.get('lastName', ''),
             "phone_number": data['phone'],
             "language": data.get('language', ''),
-            "school_id": school
+            "school_id": school,
+            "batch_name":data['batch_name'] 
         })
 
         new_teacher.insert(ignore_permissions=True)
@@ -1077,7 +1078,8 @@ def create_teacher_web():
             data['phone'],
             school_name,
             model_name,
-            language_id
+            language_id,
+            data['batch_name'] 
         )
 
         # If creation fails, try to get existing contact
@@ -1096,7 +1098,8 @@ def create_teacher_web():
                 school,
                 school_name,
                 data.get('language', ''),
-                model_name
+                model_name,
+                data['batch_name'] 
             )
 
             frappe.db.commit()
