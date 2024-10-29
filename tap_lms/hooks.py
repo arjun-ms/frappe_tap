@@ -23,7 +23,11 @@ doc_events = {
     }
 }
 
-
+api_methods = {
+    "tap_lms.api.send_otp_mock": ["POST"],
+    "tap_lms.api.verify_otp": ["POST"],
+    "tap_lms.api.create_teacher_web": ["POST"]
+}
 
 
 
