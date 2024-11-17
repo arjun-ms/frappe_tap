@@ -6,7 +6,7 @@ import requests
 import random
 import string
 import urllib.parse
-from .glific_integration import create_contact, start_contact_flow, get_contact_by_phone
+from .glific_integration import create_contact, start_contact_flow, get_contact_by_phone, update_teacher_in_glific
 from .background_jobs import enqueue_glific_actions
 
 
@@ -132,13 +132,13 @@ def send_whatsapp_message(phone_number, message):
 
 
 
-
+# Provides a list of schools along with their associated WhatsApp links for teachers.
 @frappe.whitelist(allow_guest=True)
 def get_school_name_keyword_list(api_key, start=0, limit=10):
     # Verify the API key
     if not authenticate_api_key(api_key):
         frappe.throw("Invalid API key")
-
+    # The cint() function stands for "convert to integer". 
     start = cint(start)
     limit = cint(limit)
 
@@ -171,7 +171,7 @@ def get_school_name_keyword_list(api_key, start=0, limit=10):
     return response_data
 
 
-
+# Validates a school keyword and retrieves associated school details.
 @frappe.whitelist(allow_guest=True)
 def verify_keyword():
     # Parse the request data
@@ -204,6 +204,7 @@ def verify_keyword():
     school = frappe.db.get_value("School", {"keyword": keyword}, ["name1", "model"], as_dict=True)
 
     if school:
+        # Return success response with school_name and model
         frappe.response.http_status_code = 200
         frappe.response.update({
             "status": "success",
@@ -268,12 +269,7 @@ def create_teacher(api_key, keyword, first_name, phone_number, glific_id, last_n
             "error": f"An error occurred while creating teacher: {str(e)}"
         }
 
-
-
-
-
-
-
+# Lists all active batches along with their registration links.
 @frappe.whitelist(allow_guest=True)
 def list_batch_keyword(api_key):
     if not authenticate_api_key(api_key):
@@ -306,9 +302,6 @@ def list_batch_keyword(api_key):
             })
 
     return response_data
-
-
-
 
 
 @frappe.whitelist(allow_guest=True)
@@ -432,11 +425,7 @@ def create_student():
         return {"status": "error", "message": str(e)}
 
 
-
-
-
-
-
+# Creates a new student document with the provided details
 def create_new_student(student_name, phone, gender, school_id, grade, language_name, glific_id):
     student = frappe.get_doc({
         "doctype": "Student",
@@ -469,7 +458,7 @@ def get_tap_language(language_name):
 
 
 
-
+# Validates a batch keyword and retrieves associated batch and school details.
 @frappe.whitelist(allow_guest=True)
 def verify_batch_keyword():
     try:
@@ -537,7 +526,7 @@ def verify_batch_keyword():
         frappe.response.http_status_code = 500
         return {"status": "error", "message": str(e)}
 
-
+# Provides a list of grades available for a given batch keyword.
 @frappe.whitelist(allow_guest=True)
 def grade_list(api_key, keyword):
     if not authenticate_api_key(api_key):
@@ -567,9 +556,10 @@ def grade_list(api_key, keyword):
     # Add the count to the grades dictionary
     grades["count"] = str(count)
 
+    # Returns the grades along with a count.
     return grades
 
-
+# Lists the course verticals associated with a batch keyword.
 @frappe.whitelist(allow_guest=True)
 def course_vertical_list():
     try:
@@ -590,6 +580,7 @@ def course_vertical_list():
         if not batch_onboarding:
             return {"error": "Invalid batch keyword"}
 
+        # Retrieves associated course verticals.
         batch_school_verticals = frappe.get_all(
             "Batch School Verticals",
             filters={"parent": batch_onboarding[0].name},
@@ -597,6 +588,7 @@ def course_vertical_list():
         )
 
         response_data = {}
+        # Constructs a response with vertical IDs and names.
         for vertical in batch_school_verticals:
             course_vertical = frappe.get_doc("Course Verticals", vertical.course_vertical)
             response_data[course_vertical.vertical_id] = course_vertical.name2
@@ -608,7 +600,7 @@ def course_vertical_list():
         return {"status": "error", "message": str(e)}
 
 
-
+# Retrieves a list of schools based on district or city filters.
 @frappe.whitelist(allow_guest=True)
 def list_schools():
     # Parse the request data
@@ -696,9 +688,7 @@ def course_vertical_list_count():
 
 
 
-
-
-
+# Sends an OTP to a user's phone number via WhatsApp using Gupshup.
 @frappe.whitelist(allow_guest=True)
 def send_otp_gs():
     data = frappe.request.get_json()
@@ -907,7 +897,8 @@ def send_otp():
             "error": str(e)
         }
 
-
+#  A mock function for testing purposes that prints the OTP 
+#  to the console instead of sending it.
 @frappe.whitelist(allow_guest=True)
 def send_otp_mock():
     data = frappe.request.get_json()
@@ -954,7 +945,7 @@ def send_otp_mock():
 
 
 
-
+# Verifies the OTP entered by the user.
 @frappe.whitelist(allow_guest=True)
 def verify_otp():
     try:
@@ -1005,16 +996,15 @@ def verify_otp():
         frappe.log_error(f"OTP Verification Error: {str(e)}")
         frappe.response.http_status_code = 500
         return {"status": "failure", "message": "An error occurred during OTP verification"}
+    
 
 
 
-
-
-
-
+# Handles teacher creation via a web interface, integrating with Glific for messaging.
 @frappe.whitelist(allow_guest=True)
 def create_teacher_web():
     try:
+        # Temporarily ignores permissions to allow guest users to create records.
         frappe.flags.ignore_permissions = True
         data = frappe.request.get_json()
 
@@ -1072,19 +1062,45 @@ def create_teacher_web():
         if not language_id:
             language_id = frappe.db.get_value("TAP Language", {"language_name": "English"}, "glific_language_id")  # Default to English if not found
 
-        # Try to create contact in Glific
-        glific_contact = create_contact(
-            data['firstName'],
-            data['phone'],
-            school_name,
-            model_name,
-            language_id,
-            data['batch_name'] 
-        )
+
+        #! claude code here '''' 
+        # First try to get existing contact
+        existing_glific_contact = get_contact_by_phone(data['phone'])
+
+        if existing_glific_contact and 'id' in existing_glific_contact:
+            # Update existing Glific contact
+            updated_contact = update_teacher_in_glific(
+                existing_glific_contact['id'],
+                data['firstName'],
+                school_name,
+                model_name,
+                language_id,
+                data['batch_name']
+            )
+            glific_contact = updated_contact if updated_contact else existing_glific_contact
+
+            if updated_contact:
+                print(f"Teacher contact with id: {existing_glific_contact['id']} updated successfully")
+            else:
+                print(f"Failed to update teacher contact with id: {existing_glific_contact['id']}")
+        else:
+        #! '''''
+
+            # Create new contact if no existing contact found
+            glific_contact = create_contact(
+                data['firstName'],
+                data['phone'],
+                school_name,
+                model_name,
+                language_id,
+                data['batch_name'] 
+            )
+
 
         # If creation fails, try to get existing contact
         if not glific_contact or 'id' not in glific_contact:
             glific_contact = get_contact_by_phone(data['phone'])
+
 
         if glific_contact and 'id' in glific_contact:
             new_teacher.glific_id = glific_contact['id']
@@ -1132,10 +1148,12 @@ def create_teacher_web():
 
 
 
-
+# Determines the appropriate course level for a student based on vertical, grade, and kitless options.
 def get_course_level(course_vertical, grade, kitless):
+    # Logs input values for debugging
     frappe.log_error(f"Input values: course_vertical={course_vertical}, grade={grade}, kitless={kitless}")
 
+    # Queries the "Stage Grades" doctype to find the appropriate stage for the grade.
     query = """
         SELECT name FROM `tabStage Grades`
         WHERE CAST(%s AS INTEGER) BETWEEN CAST(from_grade AS INTEGER) AND CAST(to_grade AS INTEGER)
@@ -1196,11 +1214,7 @@ def get_course_level(course_vertical, grade, kitless):
     return course_level[0].name
 
 
-
-
-
-
-
+# API endpoint to get the appropriate course level for a given grade, vertical, and batch_skeyword.
 @frappe.whitelist(allow_guest=True)
 def get_course_level_api():
     try:
@@ -1256,7 +1270,7 @@ def get_course_level_api():
 
 
 
-
+# Determines the appropriate model for a given school, considering active batch onboardings.
 def get_model_for_school(school_id):
     today = frappe.utils.today()
     
